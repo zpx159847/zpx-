@@ -35,7 +35,7 @@ docker load -i dist/pocket-lab-1.0.0-linux-amd64.tar.gz
 docker compose up -d --no-build
 ```
 
-这条路径不需要从 GitHub 拉源码或本地构建。归档通过官方 Python 基础层组装，校验层摘要、配置和应用文件；**打包机没有 Docker，因此归档的实际 `docker load/run` 尚待容器环境验证**。详见 `docs/VALIDATION.md` 和 `dist/image-report.json`。ARM 机器优先使用发布后的多架构镜像，或本地构建。
+这条路径不需要从 GitHub 拉源码或本地构建。归档通过官方 Python 基础层组装，校验层摘要、配置和应用文件；同一打包器生成的归档已在 GitHub Actions 完成 `docker load/run` 和 28 项 HTTP 测试。本机没有 Docker，本机交付归档按相同应用文件与摘要校验，不声称它在本机运行过。详见 `docs/VALIDATION.md` 和 `dist/image-report.json`。ARM 机器优先使用发布后的多架构镜像，或本地构建。
 
 如果只有镜像文件，没有 Compose 文件：
 
@@ -45,7 +45,7 @@ docker run -d --name pocket-lab -p 127.0.0.1:8080:8080 -v pocket-lab-data:/data 
 
 ## 3. GitHub 仓库与可直接拉取的镜像
 
-目标代码仓库：[zpx159847/zpx-](https://github.com/zpx159847/zpx-)。目标容器地址：`ghcr.io/zpx159847/zpx-`。
+代码仓库：[zpx159847/zpx-](https://github.com/zpx159847/zpx-)。容器地址：`ghcr.io/zpx159847/owasp-pocket-lab`。仓库名末尾的短横线不符合容器镜像命名规则，因此镜像使用独立名称。
 
 **只有仓库 Actions 构建并推送成功后，下面的镜像地址才可用；代码仓库地址本身不是容器镜像。**
 
@@ -53,7 +53,8 @@ docker run -d --name pocket-lab -p 127.0.0.1:8080:8080 -v pocket-lab-data:/data 
 
 1. 运行 HTTP 回归测试。
 2. 构建并启动真实 amd64 容器，在只读根文件系统、非 root 用户下重复全部 HTTP 测试。
-3. 通过测试后发布 `linux/amd64` 和 `linux/arm64` 镜像到 GHCR，包含 `latest`、`1.0.0` 与提交标签。
+3. 导入打包器生成的离线归档，在第二个真实容器重复测试。
+4. 通过测试后发布 `linux/amd64` 和 `linux/arm64` 镜像到 GHCR，包含 `latest`、`1.0.0` 与提交标签。
 
 需要先登录有该仓库写入权限的 GitHub 账号。首次上传可运行：
 
@@ -63,13 +64,13 @@ powershell -ExecutionPolicy Bypass -File .\publish.ps1
 
 脚本只提交工程白名单文件，不上传测试数据库、访问日志、镜像缓存或离线大文件；不执行强制推送。若本机尚未配置 Git 作者信息，请在本工程内配置 `git config user.name` 和 `git config user.email`。
 
-在 [Actions](https://github.com/zpx159847/zpx-/actions) 等待工作流变绿。首次 GHCR 包通常是私有的；如需要**不登录直接拉取**，在 [该账户的 Packages](https://github.com/zpx159847?tab=packages) 打开 `zpx-` → Package settings → Change visibility → Public。公开源码不会自动保证容器包公开。若保留私有，需要在使用机器上 `docker login ghcr.io`。
+在 [Actions](https://github.com/zpx159847/zpx-/actions) 等待工作流变绿。首次 GHCR 包通常是私有的；如需要**不登录直接拉取**，在 [该账户的 Packages](https://github.com/zpx159847?tab=packages) 打开 `owasp-pocket-lab` → Package settings → Change visibility → Public。公开源码不会自动保证容器包公开。若保留私有，需要在使用机器上 `docker login ghcr.io`。
 
 发布成功后：
 
 ```sh
-docker pull ghcr.io/zpx159847/zpx-:latest
-docker run -d --name pocket-lab -p 127.0.0.1:8080:8080 -v pocket-lab-data:/data --read-only --tmpfs /tmp:size=32m --cap-drop ALL --security-opt no-new-privileges --pids-limit 96 --memory 256m ghcr.io/zpx159847/zpx-:latest
+docker pull ghcr.io/zpx159847/owasp-pocket-lab:latest
+docker run -d --name pocket-lab -p 127.0.0.1:8080:8080 -v pocket-lab-data:/data --read-only --tmpfs /tmp:size=32m --cap-drop ALL --security-opt no-new-privileges --pids-limit 96 --memory 256m ghcr.io/zpx159847/owasp-pocket-lab:latest
 ```
 
 也可使用只含镜像引用的配置：

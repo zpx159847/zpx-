@@ -2,7 +2,7 @@
 name: pocket-lab
 services:
   lab:
-    image: ${LAB_IMAGE:-ghcr.io/zpx159847/zpx-:latest}
+    image: ${LAB_IMAGE:-ghcr.io/zpx159847/owasp-pocket-lab:latest}
     pull_policy: always
     ports:
       - "127.0.0.1:${LAB_PORT:-8080}:8080"

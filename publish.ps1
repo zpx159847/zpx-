@@ -17,4 +17,4 @@ if ($LASTEXITCODE -ne 0) {
 }
 git push -u origin main
 if ($LASTEXITCODE -ne 0) { throw '推送失败；请登录具有仓库及 workflow 写入权限的 GitHub 账号，再运行此脚本。不会强制覆盖远端。' }
-Write-Host '代码已推送。请在仓库 Actions 查看构建；成功后镜像位于 ghcr.io/zpx159847/zpx-:latest。'
+Write-Host '代码已推送。请在仓库 Actions 查看构建；成功后镜像位于 ghcr.io/zpx159847/owasp-pocket-lab:latest。'
