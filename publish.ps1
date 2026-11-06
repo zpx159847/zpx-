@@ -8,7 +8,7 @@ if (-not (Test-Path -LiteralPath '.git')) {
 }
 $actualRemote = git remote get-url origin
 if ($actualRemote -ne $Repository) { throw "当前 origin 为 $actualRemote，未推送到非预期仓库。" }
-git add -- app tests tools docs data/.keep .github Dockerfile compose.yaml compose.pull.yaml .dockerignore .gitignore .env.example README.md LICENSE start.ps1 start.sh publish.ps1
+git add -- app tests tools docs data/.keep .github Dockerfile compose.yaml compose.pull.yaml .dockerignore .gitignore .gitattributes .env.example README.md LICENSE start.ps1 start.sh publish.ps1
 if ($LASTEXITCODE -ne 0) { throw 'git add 失败' }
 git diff --cached --quiet
 if ($LASTEXITCODE -ne 0) {

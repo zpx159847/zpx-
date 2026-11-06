@@ -18,7 +18,7 @@ header = """# 关卡清单
 for c in CHALLENGES:
     header += f"| {c['id']} | {c['title']} | {c['category']} {c['category_name']} | {c['owasp2021']} | {'是' if c['logic'] else '—'} | `{c['endpoint']}` |\n"
 header += "\nA03:2025 是扩大的供应链分类；旧组件是其一个示例。供应链清单与异常放行在 2021 中没有独立同名分类，以 — 标记，避免强行一一对应。SSRF 在 2021 为 A10，在 2025 归入 A01。\n"
-(ROOT / "docs" / "CHALLENGES.md").write_text(header, encoding="utf-8")
+(ROOT / "docs" / "CHALLENGES.md").write_text(header, encoding="utf-8", newline="\n")
 walkthrough = """# 复现步骤与修复方向（含答案）
 
 每关建议从页面「重置靶场」开始，使用 alice / Alice123!。不同漏洞会改变共享钱包、角色、密码和折扣；全局重置可避免互相影响。
@@ -36,5 +36,5 @@ walkthrough += """## 推荐的修复练习
 
 浏览器代理指向本机 Burp Suite，目标为自己的 http://127.0.0.1:8080。使用独立浏览器配置进行练习；若环回请求绕过代理，可使用专门的测试浏览器或直接在 Repeater 构造请求。每次切换账号重新获取 sid Cookie。
 """
-(ROOT / "docs" / "WALKTHROUGH.md").write_text(walkthrough, encoding="utf-8")
+(ROOT / "docs" / "WALKTHROUGH.md").write_text(walkthrough, encoding="utf-8", newline="\n")
 print("Generated docs/CHALLENGES.md and docs/WALKTHROUGH.md")
