@@ -1,0 +1,17 @@
+.git
+.github
+.preview-data
+__pycache__
+**/__pycache__
+**/*.pyc
+data/*
+!data/.keep
+dist
+.image-cache
+tests
+tools
+docs
+*.log
+*.zip
+*.tar
+*.tar.gz

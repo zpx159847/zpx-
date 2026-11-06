@@ -1,0 +1,23 @@
+# Use after the GHCR workflow has published the package.
+name: pocket-lab
+services:
+  lab:
+    image: ${LAB_IMAGE:-ghcr.io/zpx159847/zpx-:latest}
+    pull_policy: always
+    ports:
+      - "127.0.0.1:${LAB_PORT:-8080}:8080"
+    volumes:
+      - lab-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 96
+    mem_limit: 256m
+    cpus: 1.0
+    init: true
+volumes:
+  lab-data:
