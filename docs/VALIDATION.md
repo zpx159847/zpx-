@@ -11,12 +11,13 @@
 - 离线镜像归档：官方 Python 基础镜像 index 和 amd64 manifest 已按 SHA256 固定；校验基础层下载摘要、解压 DiffID、最终 config ImageID、5 个层与应用文件摘要。详情见本地交付 `dist/image-report.json`。
 - GitHub Actions 的 [verify 作业](https://github.com/zpx159847/zpx-/actions/runs/42158550465/job/127698421983) 已完成真实 `docker build/run`，只读根文件系统加命名数据卷、UID 10001；28 项 HTTP 检查通过。
 - 同一 verify 作业还调用打包器生成归档，实际执行 `docker load`，再对导入的镜像运行 28 项 HTTP 检查，全部通过。两个 Compose 配置也通过 `docker compose config --quiet`。
+- [最终成功工作流](https://github.com/zpx159847/zpx-/actions/runs/42158771841)：代码提交 `0bf43110b214`，verify 和 publish 均成功；`ghcr.io/zpx159847/owasp-pocket-lab:latest` 与 `1.0.0` 已发布，含 linux/amd64、linux/arm64。
 
 ## 尚未完成的外部验证
 
 - 打包本机没有 Docker Engine、Docker Desktop 或可用 WSL，因此**没有在本机执行 `docker build`、`docker load` 或 `docker run`**。
 - 本机离线归档按 Docker image save 格式直接组装。等价归档的导入和容器运行已在 CI 验证；本机交付文件本身只进行摘要和配置验证，`image-report.json` 的运行测试字段针对本机文件。
-- GitHub 源码已推送。GHCR 发布与匿名拉取状态将在发布完成后补充；不能把构建通过等同于镜像已公开。
+- GitHub 源码和 GHCR 镜像均已发布。包初始为私有，匿名拉取状态待可见性设置完成后核验。
 - CI 中的真实 amd64 容器会重复 HTTP 测试，并验证运行 UID=10001；通过后才发布多架构镜像。ARM64 镜像配置为构建发布，尚无 ARM 运行验证。
 
 ## 复现

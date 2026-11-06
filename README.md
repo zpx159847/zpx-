@@ -47,7 +47,7 @@ docker run -d --name pocket-lab -p 127.0.0.1:8080:8080 -v pocket-lab-data:/data 
 
 代码仓库：[zpx159847/zpx-](https://github.com/zpx159847/zpx-)。容器地址：`ghcr.io/zpx159847/owasp-pocket-lab`。仓库名末尾的短横线不符合容器镜像命名规则，因此镜像使用独立名称。
 
-**只有仓库 Actions 构建并推送成功后，下面的镜像地址才可用；代码仓库地址本身不是容器镜像。**
+**镜像已发布。** [构建、容器回归与发布记录](https://github.com/zpx159847/zpx-/actions/runs/42158771841) 均成功；下方提供直接拉取命令。若需要匿名拉取，包的可见性还须为 Public。
 
 `.github/workflows/container.yml` 会在 `main` 推送时：
 
