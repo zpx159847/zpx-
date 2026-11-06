@@ -12,12 +12,13 @@
 - GitHub Actions 的 [verify 作业](https://github.com/zpx159847/zpx-/actions/runs/42158550465/job/127698421983) 已完成真实 `docker build/run`，只读根文件系统加命名数据卷、UID 10001；28 项 HTTP 检查通过。
 - 同一 verify 作业还调用打包器生成归档，实际执行 `docker load`，再对导入的镜像运行 28 项 HTTP 检查，全部通过。两个 Compose 配置也通过 `docker compose config --quiet`。
 - [最终成功工作流](https://github.com/zpx159847/zpx-/actions/runs/42158771841)：代码提交 `0bf43110b214`，verify 和 publish 均成功；`ghcr.io/zpx159847/owasp-pocket-lab:latest` 与 `1.0.0` 已发布，含 linux/amd64、linux/arm64。
+- GHCR 匿名验证通过：无需 GitHub 登录取得拉取令牌，读取两个架构的 manifest 与 config，校验 UID=10001 和代码 revision；amd64 的 7 个压缩层共 43,297,930 字节实际匿名下载并逐项验证 SHA256。`latest` 与 `1.0.0` index digest 均为 `sha256:7c6813e7d06612ec6252fc3b212d5a95463b0367ee38a960f3519bd30c4d58fa`，详情见 `registry-verification.json`。
 
 ## 尚未完成的外部验证
 
 - 打包本机没有 Docker Engine、Docker Desktop 或可用 WSL，因此**没有在本机执行 `docker build`、`docker load` 或 `docker run`**。
 - 本机离线归档按 Docker image save 格式直接组装。等价归档的导入和容器运行已在 CI 验证；本机交付文件本身只进行摘要和配置验证，`image-report.json` 的运行测试字段针对本机文件。
-- GitHub 源码和 GHCR 镜像均已发布。包初始为私有，匿名拉取状态待可见性设置完成后核验。
+- GitHub 源码和 GHCR 镜像均已公开发布；匿名清单访问及 amd64 层下载已经验证。本机没有 Docker，匿名下载验证使用 Registry API，不声称在本机执行过 Docker CLI。
 - CI 中的真实 amd64 容器会重复 HTTP 测试，并验证运行 UID=10001；通过后才发布多架构镜像。ARM64 镜像配置为构建发布，尚无 ARM 运行验证。
 
 ## 复现

@@ -1,0 +1,24 @@
+{
+  "repository": "zpx159847/owasp-pocket-lab",
+  "anonymous": true,
+  "latest_equals_1_0_0": true,
+  "index_digest": "sha256:7c6813e7d06612ec6252fc3b212d5a95463b0367ee38a960f3519bd30c4d58fa",
+  "platforms": [
+    {
+      "architecture": "amd64",
+      "manifest_digest": "sha256:39cb0fb0fcddc73e65dc00b9574ef5e56d1d7a5bc18f15cb90d3c7f7dcfc4990",
+      "revision": "0bf43110b214bd10f16182af08168f23ffc30818",
+      "runtime_user": "10001:10001",
+      "layers": 7,
+      "anonymous_layers_downloaded_and_verified": 7,
+      "compressed_bytes": 43297930
+    },
+    {
+      "architecture": "arm64",
+      "manifest_digest": "sha256:447ae2c9376b9f4d1c4bc61de758b3f49b2e1a8a162ea2e856fdc1405b9b197a",
+      "revision": "0bf43110b214bd10f16182af08168f23ffc30818",
+      "runtime_user": "10001:10001",
+      "layers": 7
+    }
+  ]
+}

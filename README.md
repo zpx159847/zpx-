@@ -47,7 +47,7 @@ docker run -d --name pocket-lab -p 127.0.0.1:8080:8080 -v pocket-lab-data:/data 
 
 代码仓库：[zpx159847/zpx-](https://github.com/zpx159847/zpx-)。容器地址：`ghcr.io/zpx159847/owasp-pocket-lab`。仓库名末尾的短横线不符合容器镜像命名规则，因此镜像使用独立名称。
 
-**镜像已发布。** [构建、容器回归与发布记录](https://github.com/zpx159847/zpx-/actions/runs/42158771841) 均成功；下方提供直接拉取命令。若需要匿名拉取，包的可见性还须为 Public。
+**镜像已公开发布。** [构建、容器回归与发布记录](https://github.com/zpx159847/zpx-/actions/runs/42158771841) 均成功；2026-11-06 已验证无需登录可读取双架构清单，并完整匿名下载、校验 amd64 的 7 个镜像层。`latest` 和 `1.0.0` 指向同一版本，下方命令可以直接使用。
 
 `.github/workflows/container.yml` 会在 `main` 推送时：
 
