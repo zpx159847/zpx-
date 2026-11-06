@@ -16,10 +16,13 @@ jobs:
       - name: HTTP regression tests
         run: python3 tests/test_lab.py
       - name: Build the actual amd64 image
-        run: docker build -t pocket-lab:ci .
+        run: |
+          docker compose config --quiet
+          docker compose -f compose.pull.yaml config --quiet
+          docker build -t pocket-lab:ci .
       - name: Start isolated test container
         run: |
-          docker run -d --name pocket-ci --read-only --tmpfs /tmp:size=32m --cap-drop ALL --security-opt no-new-privileges --pids-limit 96 --memory 256m -p 127.0.0.1:18080:8080 pocket-lab:ci
+          docker run -d --name pocket-ci -v pocket-ci-data:/data --read-only --tmpfs /tmp:size=32m --cap-drop ALL --security-opt no-new-privileges --pids-limit 96 --memory 256m -p 127.0.0.1:18080:8080 pocket-lab:ci
           for attempt in $(seq 1 30); do
             if curl --fail --silent http://127.0.0.1:18080/health; then exit 0; fi
             sleep 1
@@ -32,11 +35,29 @@ jobs:
         run: |
           python3 tests/test_lab.py
           test "$(docker exec pocket-ci id -u)" = 10001
+      - name: Import and exercise the offline image archive
+        env:
+          LAB_TEST_URL: http://127.0.0.1:18081
+        run: |
+          python3 tools/build_archive.py --tag pocket-lab:archive-ci
+          docker load -i dist/pocket-lab-1.0.0-linux-amd64.tar.gz
+          docker run -d --name pocket-archive-ci -v pocket-archive-ci-data:/data --read-only --tmpfs /tmp:size=32m --cap-drop ALL --security-opt no-new-privileges --pids-limit 96 --memory 256m -p 127.0.0.1:18081:8080 pocket-lab:archive-ci
+          READY=0
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:18081/health; then READY=1; break; fi
+            sleep 1
+          done
+          test "$READY" = 1
+          python3 tests/test_lab.py
+          test "$(docker exec pocket-archive-ci id -u)" = 10001
       - name: Container logs and cleanup
         if: always()
         run: |
           docker logs pocket-ci || true
+          docker logs pocket-archive-ci || true
           docker rm -f pocket-ci || true
+          docker rm -f pocket-archive-ci || true
+          docker volume rm pocket-ci-data pocket-archive-ci-data || true
   publish:
     if: github.event_name != 'pull_request'
     needs: verify
