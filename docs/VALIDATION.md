@@ -2,7 +2,7 @@
 
 ## 已完成
 
-- Windows 本机 Python 3.11.9：`python tests/test_lab.py`，27 项 HTTP 集成测试全部通过。
+- Windows 本机 Python 3.11.9：`python tests/test_lab.py`，28 项 HTTP 集成测试全部通过，含正常可信清单与合法管理员不误计通关的对照。
 - 测试实际检查越权返回的订单、角色变化、可逆导出、SQL 登录绕过、负数下单余额、优惠券重复到账、小额回调、未付款发货、重复退款、密码接管、风控异常放行与完整重置；不是只检查 HTTP 200。
 - 模板读取边界和 SSRF 出口沙箱也有拒绝路径测试，应用不读取真实宿主文件或任意远程地址。
 - JavaScript 使用 `node --check app/static/app.js` 检查语法。

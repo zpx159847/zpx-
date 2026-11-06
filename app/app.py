@@ -351,7 +351,10 @@ class Handler(BaseHTTPRequestHandler):
             except Exception:
                 raise ApiError(400, "profile Cookie 不是有效的 Base64 JSON")
             if isinstance(profile, dict) and profile.get("role") == "admin":
-                return {"tier": "admin", "flag": self.lab.solve(db, "cookie")}
+                result = {"tier": "admin"}
+                if user["role"] != "admin":
+                    result["flag"] = self.lab.solve(db, "cookie")
+                return result
             return {"tier": "standard", "message": "当前会员没有管理权益"}
         if method == "GET" and path == "/api/preview":
             url = q.get("url", "")
@@ -370,7 +373,10 @@ class Handler(BaseHTTPRequestHandler):
             if not 0 <= discount <= 100:
                 raise ApiError(400, "折扣范围 0 至 100")
             db.execute("UPDATE settings SET value=? WHERE key='plugin_discount'", (str(discount),))
-            return {"message": "未验证的规则已启用（本地清单演示，不执行代码）", "discount_percent": discount, "flag": self.lab.solve(db, "supply")}
+            result = {"message": "规则已启用（本地清单演示，不执行代码）", "discount_percent": discount}
+            if not data.get("verified") or data.get("source") not in ("local.demo", "official.lab") or discount > 30:
+                result["flag"] = self.lab.solve(db, "supply")
+            return result
         if method == "GET" and path == "/api/exports/customers":
             # LAB-VULN crypto: reversible encoding called encryption; fast MD5.
             rows = [{"username": r["username"], "password_md5": hashlib.md5(r["password"].encode()).hexdigest(), "fake_id": f"DEMO-{r['id']:04d}"} for r in db.execute("SELECT * FROM users")]

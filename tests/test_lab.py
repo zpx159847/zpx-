@@ -127,6 +127,8 @@ class LabTests(unittest.TestCase):
     def test_08_unsigned_plugin_changes_checkout(self):
         self.login()
         before = self.call("/api/orders", {"product_id": 1, "quantity": 1})
+        self.call("/api/plugins/install", {"name": "demo", "verified": True, "source": "local.demo", "discount_percent": 10})
+        self.assertNotIn("supply", self.solved())
         self.call("/api/plugins/install", {"name": "evil-demo", "verified": False, "source": "untrusted.lab", "discount_percent": 100})
         after = self.call("/api/orders", {"product_id": 1, "quantity": 1})
         self.assertEqual(before["total_cents"], 29900)
@@ -198,6 +200,11 @@ class LabTests(unittest.TestCase):
         self.assertEqual(self.call("/api/vip")["tier"], "admin")
         self.assertEqual(self.call("/api/me")["user"]["role"], "user")
         self.assertIn("cookie", self.solved())
+
+    def test_16b_legitimate_admin_vip_does_not_mark_cookie_forgery(self):
+        self.login("admin", "Admin123!")
+        self.assertEqual(self.call("/api/vip")["tier"], "admin")
+        self.assertNotIn("cookie", self.solved())
 
     def test_17_failed_logins_have_no_security_audit(self):
         for _ in range(5):
